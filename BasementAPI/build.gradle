@@ -1,0 +1,19 @@
+architectury {
+    common rootProject.enabled_platforms.split(',')
+}
+
+dependencies {
+    // Standard dependencies for a common Architectury module
+    modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
+    modImplementation "dev.architectury:architectury:$rootProject.architectury_api_version"
+}
+
+loom {
+    // This allows the API to be used as a library by other modules
+    configurations {
+        namedElements {
+            canBeResolved = false
+            canBeConsumed = true
+        }
+    }
+}
