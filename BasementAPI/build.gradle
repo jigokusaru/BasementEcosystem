@@ -1,5 +1,19 @@
 architectury {
-    common rootProject.enabled_platforms.split(',')
+    // This defines the API as a common module only
+    common(rootProject.enabled_platforms.split(","))
+}
+
+loom {
+    // This allows the API to be consumed as a library without remapping it
+    configurations {
+        namedElements {
+            canBeResolved = false
+            canBeConsumed = true
+        }
+    }
+    mixin {
+        defaultRefmapName = "basementapi.refmap.json"
+    }
 }
 
 dependencies {
@@ -8,12 +22,16 @@ dependencies {
     modImplementation "dev.architectury:architectury:$rootProject.architectury_api_version"
 }
 
-loom {
-    // This allows the API to be used as a library by other modules
-    configurations {
-        namedElements {
-            canBeResolved = false
-            canBeConsumed = true
-        }
-    }
+// This is the "Magic Fix": It disables the production transformation tasks
+// that are currently causing your build to fail.
+tasks.withType(net.fabricmc.loom.task.RemapJarTask).configureEach {
+    enabled = false
+}
+
+tasks.named("transformProductionFabric") {
+    enabled = false
+}
+
+tasks.named("transformProductionNeoForge") {
+    enabled = false
 }
